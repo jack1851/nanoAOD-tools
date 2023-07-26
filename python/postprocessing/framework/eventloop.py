@@ -1,5 +1,6 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Event
 from PhysicsTools.NanoAODTools.postprocessing.framework.treeReaderArrayTools import clearExtraBranches
+from PhysicsTools.NanoAODTools.postprocessing.examples.histos import eventHistos
 import sys
 import time
 import ROOT
@@ -20,14 +21,21 @@ class Module(object):
             self.objs = []
 
     def endJob(self):
-        if hasattr(self, 'objs') and self.objs != None:
-            prevdir = ROOT.gDirectory
-            self.dir.cd()
-            for obj in self.objs:
-                obj.Write()
-            prevdir.cd()
-            if hasattr(self, 'histFile') and self.histFile != None:
+        ins = eventHistos()
+	prevdir = ROOT.gDirectory
+        self.dir.cd()
+	ins.WriteHists()
+	prevdir.cd()
+        if hasattr(self, 'histFile') and self.histFile != None:
                 self.histFile.Close()
+#        if hasattr(self, 'objs') and self.objs != None:
+#            prevdir = ROOT.gDirectory
+#            self.dir.cd()
+#            for obj in self.objs:
+#                obj.Write()
+#            prevdir.cd()
+#            if hasattr(self, 'histFile') and self.histFile != None:
+#                self.histFile.Close()
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
