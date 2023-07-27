@@ -18,11 +18,13 @@ class ExampleAnalysis(Module):
 
         histFile.cd()
 
+	#Making the new directory
 	self.newdir1 = histFile.mkdir("60mll150")
         self.newdir2 = histFile.mkdir("150mll400")
         self.newdir3 = histFile.mkdir("400mll")
   
-        self.object1 = eventHistos(self.newdir1) #This assigns self.directoryName = "60mll150" in eventHistos init class.
+	#Making eventhistos objects
+        self.object1 = eventHistos(self.newdir1)
         self.object2 = eventHistos(self.newdir2)
         self.object3 = eventHistos(self.newdir3)
 	
@@ -38,7 +40,7 @@ class ExampleAnalysis(Module):
 	
 	event.eventWeight = event.genWeight/abs(event.genWeight)
 
-	self.object1.eventweights(event)
+	self.object1.eventweights(event) #This is currently filling the same histogram 3 times. i.e. the eventWeights histo has 3x as many entries as possible.
 	self.object2.eventweights(event)
 	self.object3.eventweights(event)
 
@@ -157,7 +159,7 @@ class ExampleAnalysis(Module):
 	elif 150 < event.diLepMass < 400:
 	    self.object2.FillHists(event)
 	elif event.diLepMass > 400:
-	    self.object3.FillHists(event)
+	    self.object3.FillHists(event) 
          
 #################################################################################################################################################################################################
 # CHECKING FINAL VARIABLES
