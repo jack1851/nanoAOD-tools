@@ -4,10 +4,11 @@ from PhysicsTools.NanoAODTools.postprocessing.examples.histos import eventHistos
 import sys
 import time
 import ROOT
+import os
 
 
 class Module(object):
-    def __init__(self):
+    def __init__(self, region1=None, region2=None, region3=None, dir1=None, dir2=None, dir3=None):
         self.writeHistFile = False
 
     def beginJob(self, histFile=None, histDirName=None):
@@ -16,16 +17,25 @@ class Module(object):
             prevdir = ROOT.gDirectory
             self.histFile = histFile
             self.histFile.cd()
-            self.dir = self.histFile.mkdir(histDirName)
+#           self.dir = self.histFile.mkdir(histDirName)
             prevdir.cd()
             self.objs = []
 
     def endJob(self):
-        ins = eventHistos()
 	prevdir = ROOT.gDirectory
-        self.dir.cd()
-	ins.WriteHists()
+
+        self.newdir1.cd()
+	self.object1.WriteHists()
 	prevdir.cd()
+
+	self.newdir2.cd()
+	self.object2.WriteHists()
+	prevdir.cd()
+
+        self.newdir3.cd()
+        self.object3.WriteHists()
+        prevdir.cd()
+
         if hasattr(self, 'histFile') and self.histFile != None:
                 self.histFile.Close()
 #        if hasattr(self, 'objs') and self.objs != None:

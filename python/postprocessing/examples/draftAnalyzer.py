@@ -14,14 +14,22 @@ class ExampleAnalysis(Module):
     def __init__(self):
         self.writeHistFile = True
 
-#    def beginJob(self, histFile=None, histDirName=None, allRegions=None, controlRegion1=None, controlRegion2=None, signalRegion=None, fourObject1=None):
-#        Module.beginJob(self, histFile, histDirName, "50mll", "60mll150", "150mll400", "400mll")
     def beginJob(self, histFile=None, histDirName=None):
-        Module.beginJob(self, histFile, histDirName)
-#        histFile.cd()
-#	newdir = histFile.mkdir("60mll150")
-	instance = eventHistos()
 
+        histFile.cd()
+
+	self.newdir1 = histFile.mkdir("60mll150")
+        self.newdir2 = histFile.mkdir("150mll400")
+        self.newdir3 = histFile.mkdir("400mll")
+  
+        self.object1 = eventHistos(self.newdir1) #This assigns self.directoryName = "60mll150" in eventHistos init class.
+        self.object2 = eventHistos(self.newdir2)
+        self.object3 = eventHistos(self.newdir3)
+	
+        Module(self.object1, self.object2, self.object3, self.newdir1, self.newdir2, self.newdir3) #Passing the objects and directories to eventloop
+
+        Module.beginJob(self, histFile, histDirName)
+	
     def analyze(self, event):
         electrons = Collection(event, "Electron")
         muons = Collection(event, "Muon")
@@ -29,9 +37,11 @@ class ExampleAnalysis(Module):
         genparticles = Collection(event, "GenPart")
 	
 	event.eventWeight = event.genWeight/abs(event.genWeight)
-        instance1 = eventHistos()
-	instance2 = eventHistos()
-	instance1.eventweights(event)
+
+	self.object1.eventweights(event)
+	self.object2.eventweights(event)
+	self.object3.eventweights(event)
+
 	#Two ways of accessing variables
 	     #print("Lead jet mass 1: ", (jets[0].p4()).M())
 	     #print("Lead jet mass 2: ", (jets[0].mass))
@@ -142,7 +152,12 @@ class ExampleAnalysis(Module):
 #################################################################################################################################################################################################
         #FILLING HISTOGRAMS
 ##################################################################################################################################################################################################
-        instance1.FillHists(event)
+        if 60 < event.diLepMass < 150:
+            self.object1.FillHists(event)
+	elif 150 < event.diLepMass < 400:
+	    self.object2.FillHists(event)
+	elif event.diLepMass > 400:
+	    self.object3.FillHists(event)
          
 #################################################################################################################################################################################################
 # CHECKING FINAL VARIABLES
