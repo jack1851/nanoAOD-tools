@@ -15,7 +15,7 @@ class ExampleAnalysis(Module):
         self.writeHistFile = True
 
     def beginJob(self, histFile=None, histDirName=None):
-
+	prevdir = ROOT.gDirectory
         histFile.cd()
 
 	#Making the new directory
@@ -23,12 +23,14 @@ class ExampleAnalysis(Module):
         self.newdir2 = histFile.mkdir("150mll400")
         self.newdir3 = histFile.mkdir("400mll")
   
+	prevdir.cd()
+	
 	#Making eventhistos objects
         self.object1 = eventHistos(self.newdir1)
         self.object2 = eventHistos(self.newdir2)
         self.object3 = eventHistos(self.newdir3)
 	
-        Module(self.object1, self.object2, self.object3, self.newdir1, self.newdir2, self.newdir3) #Passing the objects and directories to eventloop
+#        Module(self.object1, self.object2, self.object3, self.newdir1, self.newdir2, self.newdir3) #Passing the objects and directories to eventloop
 
         Module.beginJob(self, histFile, histDirName)
 	
@@ -37,12 +39,24 @@ class ExampleAnalysis(Module):
         muons = Collection(event, "Muon")
         jets = Collection(event, "Jet")
         genparticles = Collection(event, "GenPart")
-	
+
 	event.eventWeight = event.genWeight/abs(event.genWeight)
 
 	self.object1.eventweights(event) #This is currently filling the same histogram 3 times. i.e. the eventWeights histo has 3x as many entries as possible.
+        print("Event weight integral 1", self.object1.h_eventweight.Integral())
 	self.object2.eventweights(event)
-	self.object3.eventweights(event)
+	print("Event weight integral 2", self.object2.h_eventweight.Integral())	
+        self.object3.eventweights(event)
+	print("Event weight integral 3", self.object3.h_eventweight.Integral())
+
+	if len(electrons) < 2 and len(muons) < 2:
+	    return False
+	
+	if len(jets) < 2:
+	    return False
+	
+	if len(genparticles) < 2:
+	    return False
 
 	#Two ways of accessing variables
 	     #print("Lead jet mass 1: ", (jets[0].p4()).M())
@@ -254,9 +268,9 @@ class ExampleAnalysis(Module):
                     index = 0
         return index1
 
-preselection = "(nElectron.size() >= 2 || nMuon.size() >=2) && (nGenPart >= 2) && (nJet.size() >=2)"
+#preselection = "(nElectron.size() >= 2 || nMuon.size() >= 2) && (nGenPart >= 2) && (nJet.size() >=2)"
 
 files = [" root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18NanoAODv9/DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/280000/DF896280-DF2F-D748-ABCB-FC055EE6CC96.root"]
-p = PostProcessor(".", files, cut=preselection, branchsel=None, modules=[
+p = PostProcessor(".", files, cut=None, branchsel=None, modules=[
                   ExampleAnalysis()], noOut=True, histFileName="nanoAOD_WED.root", histDirName = "histograms")
 p.run()
