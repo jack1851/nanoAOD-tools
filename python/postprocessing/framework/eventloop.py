@@ -1,6 +1,6 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Event
 from PhysicsTools.NanoAODTools.postprocessing.framework.treeReaderArrayTools import clearExtraBranches
-from PhysicsTools.NanoAODTools.postprocessing.examples.histos import eventHistos
+from PhysicsTools.NanoAODTools.postprocessing.framework.histos import eventHistos
 import sys
 import time
 import ROOT
@@ -10,6 +10,12 @@ import os
 class Module(object):
     def __init__(self, region1=None, region2=None, region3=None, dir1=None, dir2=None, dir3=None):
         self.writeHistFile = False
+	self.region1 = region1
+	self.region2 = region2
+	self.region3 = region3
+	self.dir1 = dir1
+	self.dir2 = dir2
+	self.dir3 = dir3
 
     def beginJob(self, histFile=None, histDirName=None):
         if histFile != None and histDirName != None:
