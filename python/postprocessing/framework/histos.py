@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-#from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-#from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
-#from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from importlib import import_module
 import os
 import sys
@@ -10,65 +7,41 @@ import math
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 class eventHistos:
-
-#    h_eventweight = ROOT.TH1F('EventWeight', 'Event Weight', 200, -100, 100)
-#    h_fourobjectinvariantmass = ROOT.TH1F('FourObjectInvariantMass', 'Four Object Invariant Mass m_{lljj}', 1600, 0, 8000)
-#    h_leadjetpt = ROOT.TH1F('LeadJetpT', 'Lead jet p_{T}', 200, 0, 1000)
-#    h_subleadjetpt = ROOT.TH1F('SubleadJetpT', 'Sublead jet p_{T}', 200, 0, 1000)
-#    h_dileppt = ROOT.TH1F('DileptonpT', 'Dilepton p_{T}(ll)', 200, 0, 1000)
-#    h_ptllOvermll = ROOT.TH1F('PtllOverMll', 'p_{T}^{ll}/m_{ll}', 200, 0, 10)
-#    h_dijetpt = ROOT.TH1F('DijetpT', 'Dijet p_{T}(jj)', 200, 0, 1000)
-#    h_dijetmass = ROOT.TH1F('DijetMass', 'Dijet mass m_{jj}', 200, 0, 1000)
-#    h_leadjetZmass = ROOT.TH1F('LeadJetZMass', 'Lead Jet + Z Mass m_{jZ}', 400, 0, 2000)
-#    h_subleadjetZmass = ROOT.TH1F('SubleadJetZMass', 'Sublead Jet + Z Mass m_{jZ}', 400, 0, 2000)
-#    h_leadleppt = ROOT.TH1F('LeadLeptonpT', 'Lead Lepton p_{T}', 200, 0, 1000)
-#    h_subleadleppt = ROOT.TH1F('SubleadLeptonpT', 'Sublead Lepton p_{T}', 200, 0, 1000)
-#    h_dilepmass = ROOT.TH1F('DileptonMass', 'Dilepton Mass m_{ll}', 200, 0, 1000)
-#    h_leadjeteta = ROOT.TH1F('LeadJetEta', 'Lead jet #eta', 100, -3, 3)
-#    h_subleadjeteta = ROOT.TH1F('SubleadJetEta', 'Sublead jet #eta', 100, -3, 3)
-#    h_leadjetphi = ROOT.TH1F('LeadJetPhi', 'Lead jet #phi', 100, -4, 4)
-#    h_subleadjetphi = ROOT.TH1F('SubleadJetPhi', 'Sublead jet #phi', 100, -4, 4)
-#    h_leadlepeta = ROOT.TH1F('LeadLeptonEta', 'Lead Lepton #eta', 100, -3, 3)
-#    h_subleadlepeta = ROOT.TH1F('SubleadLeptonEta', 'Sublead Lepton #eta', 100, -3, 3)
-#    h_leadlepphi = ROOT.TH1F('LeadLeptonPhi', 'Lead Lepton #phi', 100, -4, 4)
-#    h_subleadlepphi = ROOT.TH1F('SubleadLeptonPhi', 'Sublead Lepton #phi', 100, -4, 4)
-
     def __init__(self, directoryName):
    	self.directoryName = directoryName
-	self.h_eventcount = ROOT.TH1F('EventCount', 'Event Count', 1, 0, 1)
-	self.h_eventmasscount = ROOT.TH1F('EventMassCount', 'Event Mass Count', 1, 0, 1)
-        self.h_eventweight = ROOT.TH1F('EventWeight', 'Event Weight', 200, -100, 100)
-        self.h_fourobjectinvariantmass = ROOT.TH1F('FourObjectInvariantMass', 'Four Object Invariant Mass m_{lljj}', 1600, 0, 8000) 
-        self.h_fourobjectinvariantpt = ROOT.TH1F('FourObjectInvariantpT', 'Four Object pT p_{T}(lljj)', 200, 0, 1000)
-        self.h_leadjetpt = ROOT.TH1F('LeadJetpT', 'Lead jet p_{T}', 200, 0, 1000)
-        self.h_subleadjetpt = ROOT.TH1F('SubleadJetpT', 'Sublead jet p_{T}', 200, 0, 1000)
-        self.h_dileppt = ROOT.TH1F('DileptonpT', 'Dilepton p_{T}(ll)', 200, 0, 1000)
-        self.h_ptllOvermll = ROOT.TH1F('PtllOverMll', 'p_{T}^{ll}/m_{ll}', 200, 0, 10)
-        self.h_dijetpt = ROOT.TH1F('DijetpT', 'Dijet p_{T}(jj)', 200, 0, 1000)
-        self.h_dijetmass = ROOT.TH1F('DijetMass', 'Dijet mass m_{jj}', 200, 0, 1000)
-	self.h_ptjjOvermjj = ROOT.TH1F('PtjjOverMjj', 'p_{T}^{jj}/m_{jj}', 200, 0, 10)
-        self.h_leadjetZmass = ROOT.TH1F('LeadJetZMass', 'Lead Jet + Z Mass m_{jZ}', 400, 0, 2000)
-        self.h_subleadjetZmass = ROOT.TH1F('SubleadJetZMass', 'Sublead Jet + Z Mass m_{jZ}', 400, 0, 2000)
-        self.h_leadleppt = ROOT.TH1F('LeadLeptonpT', 'Lead Lepton p_{T}', 200, 0, 1000)
-        self.h_subleadleppt = ROOT.TH1F('SubleadLeptonpT', 'Sublead Lepton p_{T}', 200, 0, 1000)
-        self.h_dilepmass = ROOT.TH1F('DileptonMass', 'Dilepton Mass m_{ll}', 200, 0, 1000)
-        self.h_leadjeteta = ROOT.TH1F('LeadJetEta', 'Lead jet #eta', 100, -3, 3)
-        self.h_subleadjeteta = ROOT.TH1F('SubleadJetEta', 'Sublead jet #eta', 100, -3, 3)
-        self.h_leadjetphi = ROOT.TH1F('LeadJetPhi', 'Lead jet #phi', 100, -4, 4)
-        self.h_subleadjetphi = ROOT.TH1F('SubleadJetPhi', 'Sublead jet #phi', 100, -4, 4)
-        self.h_leadlepeta = ROOT.TH1F('LeadLeptonEta', 'Lead Lepton #eta', 100, -3, 3)
-        self.h_subleadlepeta = ROOT.TH1F('SubleadLeptonEta', 'Sublead Lepton #eta', 100, -3, 3)
-        self.h_leadlepphi = ROOT.TH1F('LeadLeptonPhi', 'Lead Lepton #phi', 100, -4, 4)
-        self.h_subleadlepphi = ROOT.TH1F('SubleadLeptonPhi', 'Sublead Lepton #phi', 100, -4, 4)
+	self.h_eventcount = ROOT.TH1F(directoryName+'EventCount', 'Event Count', 1, 0, 1)
+        self.h_eventweight = ROOT.TH1F(directoryName+'EventWeight', 'Event Weight', 200, -100, 100)
+        self.h_fourobjectinvariantmass = ROOT.TH1F(directoryName+'FourObjectInvariantMass', 'Four Object Invariant Mass m_{lljj}', 1600, 0, 8000)
+	self.h_q2input = ROOT.TH1F(directoryName+'Q2In', 'Initial q^{2}', 1600, 0, 8000000)
+        self.h_q2ZBoson = ROOT.TH1F(directoryName+'Q2Z', 'q^{2}_{Z}', 200, 0, 1000000)
+	self.h_q2difference = ROOT.TH1F(directoryName+'Q2Diff', 'q^{2}_{in} - q^{2}_{Z} ', 1600, 0, 8000000)
+        self.h_fourobjectinvariantpt = ROOT.TH1F(directoryName+'FourObjectInvariantpT', 'Four Object pT p_{T}(lljj)', 200, 0, 1000)
+        self.h_leadjetpt = ROOT.TH1F(directoryName+'LeadJetpT', 'Lead jet p_{T}', 200, 0, 1000)
+        self.h_subleadjetpt = ROOT.TH1F(directoryName+'SubleadJetpT', 'Sublead jet p_{T}', 200, 0, 1000)
+        self.h_dileppt = ROOT.TH1F(directoryName+'DileptonpT', 'Dilepton p_{T}(ll)', 200, 0, 1000)
+        self.h_ptllOvermll = ROOT.TH1F(directoryName+'PtllOverMll', 'p_{T}^{ll}/m_{ll}', 200, 0, 10)
+        self.h_dijetpt = ROOT.TH1F(directoryName+'DijetpT', 'Dijet p_{T}(jj)', 200, 0, 1000)
+        self.h_dijetmass = ROOT.TH1F(directoryName+'DijetMass', 'Dijet mass m_{jj}', 200, 0, 1000)
+	self.h_ptjjOvermjj = ROOT.TH1F(directoryName+'PtjjOverMjj', 'p_{T}^{jj}/m_{jj}', 200, 0, 10)
+        self.h_leadjetZmass = ROOT.TH1F(directoryName+'LeadJetZMass', 'Lead Jet + Z Mass m_{jZ}', 400, 0, 2000)
+        self.h_subleadjetZmass = ROOT.TH1F(directoryName+'SubleadJetZMass', 'Sublead Jet + Z Mass m_{jZ}', 400, 0, 2000)
+        self.h_leadleppt = ROOT.TH1F(directoryName+'LeadLeptonpT', 'Lead Lepton p_{T}', 200, 0, 1000)
+        self.h_subleadleppt = ROOT.TH1F(directoryName+'SubleadLeptonpT', 'Sublead Lepton p_{T}', 200, 0, 1000)
+        self.h_dilepmass = ROOT.TH1F(directoryName+'DileptonMass', 'Dilepton Mass m_{ll}', 200, 0, 1000)
+        self.h_leadjeteta = ROOT.TH1F(directoryName+'LeadJetEta', 'Lead jet #eta', 100, -3, 3)
+        self.h_subleadjeteta = ROOT.TH1F(directoryName+'SubleadJetEta', 'Sublead jet #eta', 100, -3, 3)
+        self.h_leadjetphi = ROOT.TH1F(directoryName+'LeadJetPhi', 'Lead jet #phi', 100, -4, 4)
+        self.h_subleadjetphi = ROOT.TH1F(directoryName+'SubleadJetPhi', 'Sublead jet #phi', 100, -4, 4)
+        self.h_leadlepeta = ROOT.TH1F(directoryName+'LeadLeptonEta', 'Lead Lepton #eta', 100, -3, 3)
+        self.h_subleadlepeta = ROOT.TH1F(directoryName+'SubleadLeptonEta', 'Sublead Lepton #eta', 100, -3, 3)
+        self.h_leadlepphi = ROOT.TH1F(directoryName+'LeadLeptonPhi', 'Lead Lepton #phi', 100, -4, 4)
+        self.h_subleadlepphi = ROOT.TH1F(directoryName+'SubleadLeptonPhi', 'Sublead Lepton #phi', 100, -4, 4)
 
     def eventweights(self, event):
         self.h_eventweight.Fill(event.eventWeight)
 
-    def eventcounts(self, event):
-        self.h_eventcount.Fill(0.5, event.eventWeight)
- 
     def FillHists(self, event):
-	self.h_eventmasscount.Fill(0.5, event.eventWeight)
+	self.h_eventcount.Fill(0.5, event.eventWeight)
         self.h_fourobjectinvariantmass.Fill(event.fourObjectInvariantMass, event.eventWeight)	
         self.h_fourobjectinvariantpt.Fill(event.fourObjectInvariantPt, event.eventWeight)
         self.h_leadjetpt.Fill(event.leadJetPt, event.eventWeight)
@@ -91,12 +64,17 @@ class eventHistos:
         self.h_ptllOvermll.Fill(event.PtllOverMll, event.eventWeight)
         self.h_leadjetZmass.Fill(event.leadJetZMass, event.eventWeight)
         self.h_subleadjetZmass.Fill(event.subleadJetZMass, event.eventWeight)
+	self.h_q2input.Fill(event.q2in, event.eventWeight)
+        self.h_q2ZBoson.Fill(event.q2Z, event.eventWeight)
+        self.h_q2difference.Fill(event.q2diff, event.eventWeight)
+
 
     def WriteHists(self):
-#	self.directoryName.cd()
         self.h_eventweight.Write()
 	self.h_eventcount.Write()
-	self.h_eventmasscount.Write()
+	self.h_q2input.Write()
+        self.h_q2ZBoson.Write()
+        self.h_q2difference.Write()
         self.h_fourobjectinvariantmass.Write()
 	self.h_leadjetpt.Write()
         self.h_subleadjetpt.Write()

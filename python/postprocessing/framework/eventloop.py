@@ -30,16 +30,34 @@ class Module(object):
     def endJob(self):
 	prevdir = ROOT.gDirectory
 
-        self.newdir1.cd()
-	self.object1.WriteHists()
+        self.CR_Directory.cd()
+        self.CR_ll_Dir.cd()
+	self.CR_ll.WriteHists()
+	self.CR_ee_Dir.cd()
+	self.CR_ee.WriteHists()
+	self.CR_mumu_Dir.cd()
+        self.CR_mumu.WriteHists()
+
 	prevdir.cd()
 
-	self.newdir2.cd()
-	self.object2.WriteHists()
-	prevdir.cd()
+        self.SR_Directory.cd()
+	self.SR_ll_Dir.cd()
+        self.SR_ll.WriteHists()
+        self.SR_ee_Dir.cd()
+        self.SR_ee.WriteHists()
+        self.SR_mumu_Dir.cd()
+        self.SR_mumu.WriteHists()
 
-        self.newdir3.cd()
-        self.object3.WriteHists()
+        prevdir.cd()
+
+        self.IR_Directory.cd()
+	self.IR_ll_Dir.cd()
+        self.IR_ll.WriteHists()
+        self.IR_ee_Dir.cd()
+        self.IR_ee.WriteHists()
+        self.IR_mumu_Dir.cd()
+        self.IR_mumu.WriteHists()
+
         prevdir.cd()
 
         if hasattr(self, 'histFile') and self.histFile != None:

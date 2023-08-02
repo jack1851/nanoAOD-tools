@@ -67,9 +67,9 @@ mcFiles.append(stack.mcFile(ROOT.TFile("hists/DYJetsToLL_M-50_HT-2500toinf.root"
 #    MAKE A LIST OF ALL THE MONTE CARLO FILES
 ###################################################################################################################################################################################################################
 info = stack.stackInfo(mcFiles, arg.lumi)
-info.plotAll("60mll150","Passing Events",outDir)
+#info.plotAll("60mll150","Passing Events",outDir)
 info.plotAll("150mll400","Passing Events",outDir)
-info.plotAll("400mll","Passing Events",outDir)
+#info.plotAll("400mll","Passing Events",outDir)
 
 #       ^^^^^^^^^^^^  IN STACKPLOT_TOOL  ^^^^^^^^^^^^
 #class stackInfo:

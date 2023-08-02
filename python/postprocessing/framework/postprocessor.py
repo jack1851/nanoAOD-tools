@@ -146,6 +146,7 @@ class PostProcessor:
         outFileNames = []
         t0 = time.time()
         totEntriesRead = 0
+	self.inputFiles = [self.inputFiles] # ADDED THIS LINE SO THAT IT WOULD INTERPRET A SINGLE FILE AS A LIST WITH ONE ENTRY.
         for fname in self.inputFiles:
             ffnames = []
             if "," in fname:

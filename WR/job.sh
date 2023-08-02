@@ -13,17 +13,26 @@ PROCESS=$2
 echo "Process:" $PROCESS
 FILE=$3
 echo "File:" $FILE
+echo "In the directory with the current contents:"
+echo "pwd: $(pwd)"
+echo "ls: $(ls -lrt)"
 echo "Unzipping tarbell: CMSSW_DYNANO.tar.gz"
 tar -xzf CMSSW_DYNANO.tar.gz
 echo "Unzipped."
+#echo "Moving analyzer to the right spot"
+#mv draftAnalyzer.py CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR
+#echo "Moved"
 cd CMSSW_10_6_18
+echo "In the directory with the current contents:"
 echo "pwd: $(pwd)"
+echo "ls: $(ls -lrt)"
 echo "Running environment setup script:"
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 echo "Running cmsenv:"
 cmsenv
 echo "Scram b Project rename"
 scramv1 b ProjectRename
+echo "Running cmsenv again:"
 cmsenv
 echo "pwd: $(pwd)"
 echo "Finding python path"
@@ -35,7 +44,7 @@ cd src/PhysicsTools/NanoAODTools/
 echo "pwd: $(pwd)"
 echo "ls: $(ls -lrt)"
 echo "Submitting analyzer"
-python WR/draftAnalyzer.py $3 $2_$1
+python WR/nanoAOD_analyzer.py $3 $2_$1
 echo "Now the contents of the directory is:"
 echo "ls: $(ls -lrt)"
 echo "### End of job"
