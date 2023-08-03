@@ -12,12 +12,16 @@ class mcFile:
       self.color=fillcolor
 
 class stackInfo:
-   def __init__(self, mc, lumi):
-      self.mcFiles=mc
-      self.lumi=lumi
-   def plotAll(self,basedir,tag,outDir):
+   def __init__(self, mc, lumi, pre):
+      self.mcFiles = mc
+      self.lumi = lumi
+      self.pre = pre
+   def plotAll(self, basedir, tag,outDir):
       #Histogram name, X-axis label, Log Scale, Title, Output Directory, Rebin
-      self.stack(basedir+"/FourObjectInvariantMass","m_{lljj} (GeV)",True,tag,outDir, True)
+#      self.stack(basedir+"FourObjectInvariantMass","m_{lljj} (GeV)",True,tag,outDir, False)
+      self.stack(basedir+"Q2In","q^{2}_{initial} (GeV^{2})",True,tag,outDir, False)
+      self.stack(basedir+"Q2Z","q^{2}_{Z} (GeV^{2})",True,tag,outDir, False)
+      self.stack(basedir+"Q2Diff","q^{2}_{initial} - q^{2}_{Z} (GeV^{2})",True,tag,outDir, True)
 #      self.stack(basedir+"/leadLepPtHisto","Lead lepton p_{T} (GeV)",True,tag,outDir, True)
 #      self.stack(basedir+"/subleadLepPtHisto","Sublead lepton p_{T} (GeV)",True,tag,outDir, True)
 #      self.stack(basedir+"/leadJetPtHisto","Lead jet p_{T} (GeV)",True,tag,outDir, True)
@@ -28,73 +32,24 @@ class stackInfo:
 #      self.stack(basedir+"/ptllOverMllHisto","p_{T}_{ll}/m_{ll}",True,tag,outDir, True)
 #      self.stack(basedir+"/leadJetZMass","m_{jz} (GeV)",True,tag,outDir, True)
 #      self.stack(basedir+"/subleadJetZMass","m_{jz} (GeV)",True,tag,outDir, True)
-  
-#*************************************************************
-# What does this do?                                         *
-#*************************************************************
-   def getRatio(self, hist, reference):
-        ratio = hist.Clone("%s_ratio"%hist.GetName())
-        ratio.SetDirectory(0)
-        ratio.SetLineColor(hist.GetLineColor())
-        for xbin in xrange(1,reference.GetNbinsX()+1):
-                ref = reference.GetBinContent(xbin)
-                val = hist.GetBinContent(xbin)
-
-                refE = reference.GetBinError(xbin)
-                valE = hist.GetBinError(xbin)
-                try:
-                        ratio.SetBinContent(xbin, val/ref)
-                        ratio.SetBinError(xbin, math.sqrt( (val*refE/(ref**2))**2 + (valE/ref)**2 ))
-                except ZeroDivisionError:
-                        #ratio.SetBinContent(xbin, 1.0)
-                        ratio.SetBinError(xbin, 0.0)
-        return ratio
-#*************************************************************
-# What does this do?                                         *
-#*************************************************************
-   def TOTerror(self, hmc, ratio ):
-      hmc.Sumw2()
-      den1 = hmc.Clone ("den1");
-      den2 = hmc.Clone ("den2");
-
-      nvar = hmc.GetNbinsX();
-
-      x1 = []
-      y1 = []
-      exl1 = []
-      eyl1= []
-      exh1= []
-      eyh1= []
-
-      for km in range(1,nvar+1):
-        delta = hmc.GetBinError(km)
-        den1.SetBinError(km,0)
-
-      # ratio from variation and nominal
-      ratiop = hmc.Clone("ratiop");
-      ratiom = hmc.Clone("ratiom");
-
-      ratiop.Divide(den1);
-      ratiom.Divide(den1);
-      #den1.Divide(ratiop)
-      #den2.Divide(ratiom)
-
-      return ratiop;
 #***********************************************************************************************
 # Calculate the efficiency scale factor (event count / event weight)                           *
 #***********************************************************************************************
    # Use # of muons passing tag for total weight because I know that there was no over/underflow
    def calcScaleFactor(self,name,inputFile):
        print "Name is ", name
-       eff = inputFile.Get(name).Integral()/inputFile.Get("150mll400/EventWeight").Integral() #eff = eventCount/eventWeight 
+       eff = inputFile.Get(name).Integral()/inputFile.Get(self.pre+"EventWeight").Integral() #eff = eventCount/eventWeight 
        print "eventCount: ", inputFile.Get(name).Integral()
-       print "eventWeight: ", inputFile.Get("150mll400/EventWeight").Integral()
+       print "eventWeight: ", inputFile.Get(self.pre+"EventWeight").Integral()
        return eff
 #*************************************************************
 # Start the stack method                                         *
 #*************************************************************
    def stack(self, name, xtitle, log, tag, outDir,rebin=False):
       stackplot = ROOT.THStack("stack","")
+      print("NAME IS %r") % name
+      prefix = name.split("mll")
+      print(prefix)
 #*************************************************************
 # Legend formatting: TLegend(x1, y1, x2, y2) *
 #*************************************************************
@@ -105,8 +60,11 @@ class stackInfo:
 #*************************************************************
 # Create variable bin sizes                                  *
 #*************************************************************
-      if("FourObjectInvariantMass" in name):
-        binBoundaries = [800,1000,1200,1400,1600, 2000,2400,2800, 3200, 8000]
+#      if(rebin):
+#          if("FourObjectInvariantMass" in name):
+#              binBoundaries = [800,1000,1200,1400,1600, 2000,2400,2800, 3200, 8000]
+#	  elif ("Q2Diff" in name):
+#              binBoundaries = [0,500000,1000000,1500000,2000000,2500000,3000000,3500000,4000000,5000000,6000000,8000000,10000000,20000000]
 #      elif ("leadLepPtHisto" in name):
 #        binBoundaries = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 250, 300, 400, 500, 1000]
 #      elif ("subleadLepPtHisto" in name):
@@ -125,7 +83,7 @@ class stackInfo:
 #        binBoundaries = [0, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 450, 500, 550, 600, 700, 800, 900, 1000, 1500, 2000, 2500, 3000]
 #      elif ("subleadJetZMass" in name):
 #        binBoundaries = [0, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 450, 500, 550, 600, 700, 800, 900, 1000, 1500, 2000, 2500, 3000]
-      binBoundariesArray = array.array('d', binBoundaries)
+#          binBoundariesArray = array.array('d', binBoundaries)
 #*************************************************************
 # Renormalize Histograms to 1 or the luminosity              *
 #*************************************************************
@@ -153,16 +111,15 @@ class stackInfo:
           hist.SetDirectory(0)
 
           if(rebin):
-#            hist.Rebin(40)
-             hist_Rebin = hist.Rebin(len(binBoundariesArray) - 1,"hnew",binBoundariesArray)
-
-	  for i in range(1,hist_Rebin.GetNbinsX()+1):
-	      binWidth = binBoundaries[i] - binBoundaries[i-1]
-              hist_Rebin.SetBinContent(i,hist_Rebin.GetBinContent(i))
-              hist_Rebin.SetBinError(i,hist_Rebin.GetBinError(i))             
-   
-#         hists.append(hist)
-          hists.append(hist_Rebin)
+              hist.Rebin(50)
+#             hist_Rebin = hist.Rebin(len(binBoundariesArray) - 1,"hnew",binBoundariesArray)
+#
+#	      for i in range(1,hist_Rebin.GetNbinsX()+1):
+#	          binWidth = binBoundaries[i] - binBoundaries[i-1]
+#                  hist_Rebin.SetBinContent(i,hist_Rebin.GetBinContent(i))
+#                  hist_Rebin.SetBinError(i,hist_Rebin.GetBinError(i))             
+#             hists.append(hist_Rebin)
+          hists.append(hist)
 
 	  if count < 1:
             leg.AddEntry(hist, mcFile.label,"f")
@@ -200,25 +157,27 @@ class stackInfo:
       maximum=stackplot.GetMaximum()
       minimum=min(stackplot.GetMinimum(),0)
       if log:
+#	 print(stackplot.GetMinimum())
 	 minimum=max(stackplot.GetMinimum(),100)
-         stackplot.SetMinimum(minimum*0.002825) #Use if y-axis minimum is 10^{-1}
+#        stackplot.SetMinimum(0.1)
+#         stackplot.SetMinimum(minimum*0.002825) #Use if y-axis minimum is 10^{-1}
 #        stackplot.SetMinimum(minimum*0.01525) #Use if y-axis minimum is 1
-
       if not log:
          minimum=0
-         stackplot.SetMinimum(minimum) 
+#        stackplot.SetMinimum(minimum) 
       
       if not log:
          stackplot.SetMaximum(maximum*1.2)
       else:
          stackplot.SetMaximum(maximum*6)
-      
+
+      stackplot.SetMinimum(minimum*0.004)      
 #**************************************************************************************
 # Format the x-axis                                                                   *
 #**************************************************************************************
       stackplot.GetXaxis().SetTitleOffset(1.15)
       stackplot.GetXaxis().SetTitle(xtitle)
-      stackplot.GetXaxis().SetRangeUser(800,8000)
+#     stackplot.GetXaxis().SetRangeUser(800,8000)
 #     stackplot.GetXaxis().SetTitleSize(20)
       stackplot.GetXaxis().SetTickSize(0.02)
       stackplot.Draw("hist")
@@ -268,5 +227,5 @@ class stackInfo:
       img = ROOT.TImage.Create()
       img.FromPad(plot)
 #     plot.Print(outDir+"/"+name.split("/")[0]+name.split("/")[1]+"_stack.png")
-      plot.Print(outDir+"/"+name.split("/")[0]+name.split("/")[1]+"_stack.pdf")
+      plot.Print(outDir+"/"+name.split("/")[2]+"_stack.pdf")
 #     plot.Print(outDir+"/"+name.split("/")[0]+name.split("/")[1]+"_stack.C")

@@ -66,17 +66,27 @@ mcFiles.append(stack.mcFile(ROOT.TFile("hists/DYJetsToLL_M-50_HT-2500toinf.root"
 ###################################################################################################################################################################################################################
 #    MAKE A LIST OF ALL THE MONTE CARLO FILES
 ###################################################################################################################################################################################################################
-info = stack.stackInfo(mcFiles, arg.lumi)
-#info.plotAll("60mll150","Passing Events",outDir)
-info.plotAll("150mll400","Passing Events",outDir)
-#info.plotAll("400mll","Passing Events",outDir)
+#prefix = "400mll/l_l/400mll_ll_"
+#prefix = "400mll/e_e/400mll_ee_"
+#prefix = "400mll/mu_mu/400mll_mumu_"
+
+#prefix = "150mll400/l_l/150mll400_ll_"
+#prefix = "150mll400/e_e/150mll400_ee_"
+#prefix = "150mll400/mu_mu/150mll400_mumu_"
+
+prefix = "60mll150/l_l/60mll150_ll_"
+#prefix = "60mll150/e_e/60mll150_ee_"
+#prefix = "60mll150/mu_mu/60mll150_mumu_"
+
+info = stack.stackInfo(mcFiles, arg.lumi, prefix)
+info.plotAll(prefix, "Passing Events",outDir)
 
 #       ^^^^^^^^^^^^  IN STACKPLOT_TOOL  ^^^^^^^^^^^^
 #class stackInfo:
 #   def __init__(self, mc, lumi):
 #      self.mcFiles=mc
 #      self.lumi=lumi
-#   def plotAll(self,basedir,tag,outDir):
+#   def plotAll(self,basedir ,tag,outDir):
 
 # WHAT DOES TAG MEAN?
 ###################################################################################################################################################################################################################

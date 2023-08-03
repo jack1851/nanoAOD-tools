@@ -18,7 +18,9 @@ PROCESSES=( \
 
 #Copy the tarball
 cd /uscms/home/bjackson/nobackup/WR/DY_NANOAOD
-tar -czvf CMSSW_DYNANO.tar.gz CMSSW_10_6_18
+echo "Creating tarball of working directory. Wait approx 30 seconds..."
+tar -czf CMSSW_DYNANO.tar.gz CMSSW_10_6_18
+echo "Tarball created. Submitting scripts."
 for PROCESS in ${PROCESSES[@]}
 do
     cp CMSSW_DYNANO.tar.gz WR_ANALYZE/$PROCESS/

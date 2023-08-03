@@ -103,7 +103,7 @@ class ExampleAnalysis(Module):
         subleadLep = None
 
         for ele in electrons:
-	    if ele.eta > 2.4 or ele.pt < 53:
+	    if abs(ele.eta) > 2.4 or ele.pt < 53:
 	        continue
 	    elif ele.cutBased_HEEP == False:
 	        continue
@@ -129,9 +129,15 @@ class ExampleAnalysis(Module):
                     subleadLep = mu
                     break
                 mu_count += 1
-		
+	
         if leadLep is None or subleadLep is None:
             return False
+
+	if abs(leadLep.pdgId) != abs(subleadLep.pdgId):
+	    return False
+
+	if self.DeltaR(leadLep,subleadLep) < 0.4:
+	    return False
 #*******************************************************************************************************	
 # Select Jets
 #******************************************************************************************************
@@ -189,7 +195,7 @@ class ExampleAnalysis(Module):
 #***********************************************************************************************************
  # FILLING HISTOGRAMS                                                                                      *
 #***********************************************************************************************************
-        if 50 < event.diLepMass < 150:
+        if 60 < event.diLepMass < 150:
             self.CR_ll.FillHists(event)
 	    if abs(leadLep.pdgId) == 11: 
 	        self.CR_ee.FillHists(event)
@@ -264,27 +270,12 @@ class ExampleAnalysis(Module):
             dphi = abs(dphi - 2 * math.pi)
         return math.sqrt(dphi**2 + deta**2)
 	
-    def getMotherId(self, GenPart, index):
-	if index == -1:
-	    return
-	else:
-	    return GenPart[index].pdgId
-
     def fourMomVec(self, gen):
-	pX = 0
-        pY = 0
-        pZ = 0
-        ene = 0
+        qin = ROOT.TLorentzVector()
         for i in gen:
-#           print("%r, ID: %r, Mother Index: %r, Mother Id: %r, px: %r, py: %r, pz: %r, e: %r") % (i, i.pdgId, i.genPartIdxMother, self.getMotherId(genparticles, i.genPartIdxMother), round(i.p4().Px(),2), round(i.p4().Py(),2), round(i.p4().Pz(),2), round(i.p4().E(),2))
-            if i.genPartIdxMother == 0:
-                pX += i.p4().Px()
-                pY += i.p4().Py()
-                pZ += i.p4().Pz()
-                ene += i.p4().E()
-        qin = ROOT.TLorentzVector(pX, pY, pZ, ene)
-	return qin
-
+            if i.genPartIdxMother == 0 or i.genPartIdxMother == 1:
+                qin += i.p4()
+        return qin
 
 #filename = "root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18NanoAODv9/DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/280000/DF896280-DF2F-D748-ABCB-FC055EE6CC96.root"
 p = PostProcessor(".", filename, cut=None, branchsel=None, modules=[
