@@ -19,7 +19,8 @@ PROCESSES=( \
 #Copy the tarball
 cd /uscms/home/bjackson/nobackup/WR/DY_NANOAOD
 echo "Creating tarball of working directory. Wait approx 30 seconds..."
-tar -czf CMSSW_DYNANO.tar.gz CMSSW_10_6_18
+tar --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/*' -czvf CMSSW_DYNANO.tar.gz CMSSW_10_6_18
+#tar --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/2Dhistos' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/ptjjovermjj' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/dijet_pt' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/leadjet_pt' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/leadlepton_pt' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/dilepton_pt' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/dijet_mass' --exclude='CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/ptllovermll' -czvf CMSSW_DYNANO.tar.gz CMSSW_10_6_18
 echo "Tarball created. Submitting scripts."
 for PROCESS in ${PROCESSES[@]}
 do

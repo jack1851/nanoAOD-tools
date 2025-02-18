@@ -2,7 +2,7 @@
 
 # Define path for job directories
 BASE_PATH=/uscms/home/bjackson/nobackup/WR/DY_NANOAOD/WR_ANALYZE
-NEW_PATH=/uscms/home/bjackson/nobackup/WR/DY_NANOAOD/CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/hists
+NEW_PATH=/uscms/home/bjackson/nobackup/WR/DY_NANOAOD/CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/WR/reweighting_variables/q2
 mkdir -p $BASE_PATH
 
 # Set processes
@@ -21,11 +21,11 @@ PROCESSES=( \
 THIS_PWD=$PWD
 for PROCESS in ${PROCESSES[@]}
 do
-    cd $NEW_PATH
-    rm ${PROCESS}.root
-    echo "${PROCESS}.root removed."
     cd $BASE_PATH/$PROCESS
     hadd -fk ${PROCESS}.root *.root    
-    mv ${PROCESS}.root $NEW_PATH
+    mv ${PROCESS}.root $NEW_PATH/files
+    mv ${PROCESS}_log/ $NEW_PATH/log
+    mv ${PROCESS}_err/ $NEW_PATH/err
+    mv ${PROCESS}_out/ $NEW_PATH/out
     cd $THIS_PWD
 done

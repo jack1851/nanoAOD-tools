@@ -10,3 +10,5 @@ build
 *.d
 *.so
 *.pcm
+*.pdf
+reweighting_variables/

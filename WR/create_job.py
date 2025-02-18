@@ -10,9 +10,9 @@ universe = vanilla
 executable = ./{PROCESS}.sh
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-output = out/{PROCESS}_$(ProcId).out
-error = err/{PROCESS}_$(ProcId).err
-log = log/{PROCESS}_$(ProcId).log
+output = {PROCESS}_out/{PROCESS}_$(ProcId).out
+error = {PROCESS}_err/{PROCESS}_$(ProcId).err
+log = {PROCESS}_log/{PROCESS}_$(ProcId).log
 transfer_input_files = CMSSW_DYNANO.tar.gz
 transfer_output_files = CMSSW_10_6_18/src/PhysicsTools/NanoAODTools/{PROCESS}_$(ProcId).root
 queue arguments from arguments.txt\
@@ -50,9 +50,9 @@ def main(args):
     jobdir = os.path.join(args["jobdir"], process)
     print("Jobdir: %s" % jobdir)
     mkdir(jobdir)
-    mkdir(os.path.join(jobdir, "out"))
-    mkdir(os.path.join(jobdir, "log"))
-    mkdir(os.path.join(jobdir, "err"))
+    mkdir(os.path.join(jobdir, process+"_out"))
+    mkdir(os.path.join(jobdir, process+"_log"))
+    mkdir(os.path.join(jobdir, process+"_err"))
 
     # Write jdl file
     out = open(os.path.join(jobdir, "job.jdl"), "w")
